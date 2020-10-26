@@ -136,7 +136,7 @@ class CFIN():
             # optimizer
             self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate, beta1=0.9, beta2=0.999,
                                                         epsilon=1e-8).minimize(self.loss)
-            self.saver = tf.train.Saver()
+            self.saver = tf.train.Saver() #savemodel
             init = tf.global_variables_initializer()
             self.sess = self._init_session()
             self.sess.run(init)
@@ -330,7 +330,7 @@ class CFIN():
 
         # print(self.sess)        
         # exit()
-        save_path = self.saver.save(self.sess, "my_model/CFIN")
+        save_path = self.saver.save(self.sess, "my_model/CFIN") #savemodel
         print("Save to path: ", save_path)
         return save_path
         

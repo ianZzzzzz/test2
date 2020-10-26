@@ -1,9 +1,11 @@
 import pandas as pd
 
-train = pd.read_csv('prediction_log/train_log.csv')
-test = pd.read_csv('prediction_log/test_log.csv')
-train_truth = pd.read_csv('prediction_log/train_truth.csv', index_col='enroll_id')
-test_truth = pd.read_csv('prediction_log/test_truth.csv', index_col='enroll_id')
+train = pd.read_csv('prediction_log/train_log.csv') #
+test = pd.read_csv('prediction_log/test_log.csv')   #
+
+train_truth = pd.read_csv('prediction_log/train_truth.csv', index_col='enroll_id') #
+test_truth = pd.read_csv('prediction_log/test_truth.csv', index_col='enroll_id') #
+
 all_truth = pd.concat([train_truth, test_truth])
 all_log = pd.concat([train, test])
 
@@ -31,6 +33,7 @@ enroll_info = all_log[['username','course_id','enroll_id']].drop_duplicates()
 enroll_info.index = enroll_info['enroll_id']
 del enroll_info['enroll_id']
 all_num = pd.merge(all_num, enroll_info, left_index=True, right_index=True)
-all_num.loc[test_enroll].to_csv('test_features.csv')
-all_num.loc[train_enroll].to_csv('train_features.csv')
+
+all_num.loc[test_enroll].to_csv('test_features.csv') #
+all_num.loc[train_enroll].to_csv('train_features.csv')#
 

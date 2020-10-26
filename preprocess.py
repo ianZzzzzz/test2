@@ -4,15 +4,19 @@ import pickle as pkl
 import math
 from sklearn.preprocessing import StandardScaler
 
-train_feat= pd.read_csv('train_features.csv', index_col=0)
-test_feat= pd.read_csv('test_features.csv', index_col=0)
+train_feat= pd.read_csv('train_features.csv', index_col=0) #
+test_feat= pd.read_csv('test_features.csv', index_col=0) #
+user_profile = pd.read_csv('user_info.csv', index_col='user_id') #
+courseinfo = pd.read_csv('course_info.csv', index_col='id') #
+# pkl.dump(act_feats, open('act_feats.pkl','wb')) #
 all_feat = pd.concat([train_feat, test_feat])
 
-user_profile = pd.read_csv('user_info.csv', index_col='user_id')
+
 
 # extract user age
 birth_year = user_profile['birth'].to_dict()
 def age_convert(y):
+    
     if y == None or math.isnan(y):
         return 0
     a = 2018 - int(y)
@@ -57,13 +61,12 @@ all_feat = pd.merge(all_feat, course_enroll_num, left_on='course_id', right_inde
 
 
 #extract user cluster
-user_cluster_id = pkl.load(open('cluster/user_dict','r'))
-cluster_label = np.load('cluster/label_5_10time.npy')
+user_cluster_id = pkl.load(open('cluster/user_dict','r')) #
+cluster_label = np.load('cluster/label_5_10time.npy') #
 all_feat['cluster_label'] = [cluster_label[user_cluster_id[u]] for u in all_feat['username']]
 
 
 #extract course category
-courseinfo = pd.read_csv('course_info.csv', index_col='id')
 en_categorys = ['math','physics','electrical', 'computer','foreign language', 'business', 'economics','biology','medicine','literature','philosophy','history','social science', 'art','engineering','education','environment','chemistry']
 
 def category_convert(cc):
@@ -79,7 +82,7 @@ all_feat['course_category'] = [category_convert(category_dict.get(str(x), None))
 
 act_feats = [c for c in train_feat.columns if 'count' in c or 'time' in c or 'num' in c]
 
-pkl.dump(act_feats, open('act_feats.pkl','wb'))
+pkl.dump(act_feats, open('act_feats.pkl','wb')) #
 
 num_feats = act_feats + ['age','course_enroll_num','user_enroll_num']
 scaler= StandardScaler()

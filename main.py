@@ -8,14 +8,20 @@ import pickle as pkl
 from model import CFIN
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '2,4'
-act_feat_basic = pkl.load(open('act_feats.pkl','rb'))
+
+act_feat_basic = pkl.load(open('act_feats.pkl','rb')) # 只有列名 没有数据
+
 user_cat_feat = ['gender', 'cluster_label']
 user_num_feat = ['age','user_enroll_num']
 course_cat_feat = ['course_category']
 course_num_feat = ['course_enroll_num']
+'''
+act_feats.pkl里存储含有time count num字符的列名 
+
+'''
 
 def feat_augment(train_feat, test_feat):
-    act_feats = pkl.load(open('act_feats.pkl', 'rb'))
+    act_feats = pkl.load(open('act_feats.pkl', 'rb')) # 讀取含有'num' 'time' 'count'的列名
     all_feat = pd.concat([train_feat, test_feat])
     all_feat_u_mean = all_feat.groupby('username').mean()[act_feats]
     all_feat_u_mean.columns = [x+'#user#mean' for x in all_feat_u_mean.columns]
@@ -34,7 +40,8 @@ def feat_augment(train_feat, test_feat):
     all_feat = pd.merge(all_feat, all_feat_c_mean, right_index=True, left_on='course_id')
     all_feat = pd.merge(all_feat, all_feat_c_max, right_index=True, left_on='course_id')
     
-    act_feat = []
+    act_feat = []  # 初始化 用来存统计值的列名
+    # act_feat_basic = pkl.load(open('act_feats.pkl','rb')) # 只有列名 没有数据
     for f in act_feat_basic:
         act_feat.append(f)
         act_feat.append(f+'#user#mean')
@@ -71,13 +78,17 @@ def dataparse(train, test, num_feat, cat_feat):
 def load_data():
     dfTrain = pd.read_csv('train_feat.csv', index_col=0)
     dfTest = pd.read_csv('test_feat.csv', index_col=0)
+    # 这里的u 和c 是很单纯的uc数据 不包含act
     dfTrain_u = dfTrain[user_num_feat + user_cat_feat +['truth']]
     dfTest_u = dfTest[user_num_feat + user_cat_feat +['truth']]
     
     dfTrain_c = dfTrain[course_num_feat + course_cat_feat +['truth']]
     dfTest_c = dfTest[course_num_feat + course_cat_feat +['truth']]
-    dfTrain_a = dfTrain[act_feat_basic +['truth','username','course_id']]
+
+     # act_feat_basic = pkl.load(open('act_feats.pkl','rb')) # 只有列名 没有数据 'num''time''count'
+    dfTrain_a = dfTrain[act_feat_basic +['truth','username','course_id']] # 注册号：行为的统计值 + 辍学标签
     dfTest_a = dfTest[act_feat_basic +['truth','username','course_id']]
+    # 各种行为的计数值 不含统计值数据
     
     return dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a
 
@@ -85,6 +96,7 @@ def load_data():
 def model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a, params, act_feat):
         
     u_feat_dim, u_data_indice, u_data_value = dataparse(dfTrain_u, dfTest_u, user_num_feat, user_cat_feat)
+
     ui_train, uv_train = np.asarray(u_data_indice.loc[dfTrain_u.index], dtype=int), np.asarray(u_data_value.loc[dfTrain_u.index], dtype=float)
     ui_test, uv_test = np.asarray(u_data_indice.loc[dfTest_u.index], dtype=int), np.asarray(u_data_value.loc[dfTest_u.index], dtype=float)
     
@@ -92,6 +104,7 @@ def model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a, par
     params["u_field_size"] = len(ui_train[0])
         
     c_feat_dim, c_data_indice, c_data_value = dataparse(dfTrain_c, dfTest_c, course_num_feat, course_cat_feat)
+    
     ci_train, cv_train = np.asarray(c_data_indice.loc[dfTrain_c.index], dtype=int), np.asarray(c_data_value.loc[dfTrain_c.index], dtype=float)
     ci_test, cv_test = np.asarray(c_data_indice.loc[dfTest_c.index], dtype=int), np.asarray(c_data_value.loc[dfTest_c.index], dtype=float)
     
@@ -99,18 +112,19 @@ def model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a, par
     params["c_field_size"] = len(ci_train[0])
     
     av_train = np.asarray(dfTrain_a[act_feat], dtype=float)
-    
     ai_train = np.asarray([range(len(act_feat)) for x in range(len(dfTrain_a))], dtype=int)
+    
     av_test = np.asarray(dfTest_a[act_feat], dtype=float)
     ai_test = np.asarray([range(len(act_feat)) for x in range(len(dfTest_a))], dtype=int)
 
     params["a_feat_size"] = len(ai_train[0])
     params["a_field_size"] = len(ai_train[0])
     
+    # 、这只用到a 没用uc
     y_train = np.asarray(dfTrain_a['truth'], dtype=int)
     y_test = np.asarray(dfTest_a['truth'], dtype=int)
     model = CFIN(**params)
-   
+    #以下我粗略看还是只用a 要再康康
     # generate valid set
     train_num = len(y_train)
     indices = np.arange(train_num)
@@ -137,7 +151,7 @@ def model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a, par
 
 # load data
 dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a = load_data()
-dfTrain_a, dfTest_a, act_feat = feat_augment(dfTrain_a, dfTest_a)
+dfTrain_a, dfTest_a, act_feat = feat_augment(dfTrain_a, dfTest_a) # 计算统计值直接merge act_feat 是包含统计值列名的列名list
 
 params = {
     "embedding_size": 32,
@@ -160,7 +174,7 @@ params = {
     "eval_metric": roc_auc_score,
     "random_seed": 12345
 }
-
+# 没有返回值不能这样写
 # y_train_dfm, y_test_dfm = model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a,params, act_feat)
 model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a,params, act_feat)
 

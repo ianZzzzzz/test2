@@ -1,0 +1,4 @@
+[1024/214336.068:ERROR:registration_protocol_win.cc(103)] CreateFile: 系统找不到指定的文件。 (0x2)
+[1024/230300.252:ERROR:http_transport_win.cc(276)] WinHttpSendRequest: 操作成功完成。 (0x0)
+[1024/230307.398:ERROR:http_transport_win.cc(276)] WinHttpSendRequest: 操作成功完成。 (0x0)
+[1024/230310.973:ERROR:http_transport_win.cc(276)] WinHttpSendRequest: 操作成功完成。 (0x0)

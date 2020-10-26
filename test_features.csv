@@ -1,0 +1,3 @@
+enroll_id,all#count,session#count,seek_video#num,play_video#num,pause_video#num,stop_video#num,load_video#num,problem_get#num,problem_check#num,problem_save#num,reset_problem#num,problem_check_correct#num,problem_check_incorrect#num,create_thread#num,create_comment#num,delete_thread#num,delete_comment#num,click_info#num,click_courseware#num,click_about#num,click_forum#num,click_progress#num,close_courseware#num,truth,username,course_id
+778,120,120,6,30,20,0,10,0,0,0,0,0,0,0,0,0,0,10,22,10,0,0,12,0,671700,course-v1:TsinghuaX+70800232X+2015_T2
+775,78,78,0,24,12,4,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,1,1520977,course-v1:TsinghuaX+70800232X+2015_T2

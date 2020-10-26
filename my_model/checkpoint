@@ -1,0 +1,2 @@
+model_checkpoint_path: "CFIN"
+all_model_checkpoint_paths: "CFIN"

@@ -4,12 +4,12 @@ import pickle as pkl
 import math
 from sklearn.preprocessing import StandardScaler
 
-train_feat= pd.read_csv('train_features.csv', index_col=0) #
-test_feat= pd.read_csv('test_features.csv', index_col=0) #
-user_profile = pd.read_csv('user_info.csv', index_col='user_id') #
-courseinfo = pd.read_csv('course_info.csv', index_col='id') #
-# pkl.dump(act_feats, open('act_feats.pkl','wb')) #
-all_feat = pd.concat([train_feat, test_feat])
+train_feat= pd.read_csv('train_features.csv', index_col=0) # 每个注册号下各种行为的数量汇总
+test_feat= pd.read_csv('test_features.csv', index_col=0) # 
+user_profile = pd.read_csv('user_info.csv', index_col='user_id') # user_id,gender,education,birth
+courseinfo = pd.read_csv('course_info.csv', index_col='id') # id,course_id,start,end,course_type,category
+# pkl.dump(act_feats, open('act_feats.pkl','wb')) # 
+all_feat = pd.concat([train_feat, test_feat]) # 
 
 
 
@@ -80,13 +80,16 @@ category_dict = courseinfo['category'].to_dict()
 
 all_feat['course_category'] = [category_convert(category_dict.get(str(x), None)) for x in all_feat['course_id']]
 
-act_feats = [c for c in train_feat.columns if 'count' in c or 'time' in c or 'num' in c]
+act_feats = [c for c in train_feat.columns if 'count' in c or 'time' in c or 'num' in c] 
+# 只提取计数数据的列名 不包含id和统计值列名
 
-pkl.dump(act_feats, open('act_feats.pkl','wb')) #
+pkl.dump(act_feats, open('act_feats.pkl','wb')) # 只写了列名进去 没有数据 
 
 num_feats = act_feats + ['age','course_enroll_num','user_enroll_num']
+# 计数数据的列名 + 年龄 + 课程数 + 用户数
+
 scaler= StandardScaler()
-newX = scaler.fit_transform(all_feat[num_feats])
+newX = scaler.fit_transform(all_feat[num_feats]) # 对train+test归一化 方差为一 均值为零
 print(newX.shape)
 for i, n_f in enumerate(num_feats):
     all_feat[n_f] = newX[:,i]   

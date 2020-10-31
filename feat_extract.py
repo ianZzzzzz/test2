@@ -10,8 +10,8 @@ all_truth = pd.concat([train_truth, test_truth])
 all_log = pd.concat([train, test])
 
 train_enroll = list(set(list(train['enroll_id'])))
-
 test_enroll = list(set(list(test['enroll_id'])))
+
 video_action = ['seek_video','play_video','pause_video','stop_video','load_video']
 problem_action = ['problem_get','problem_check','problem_save','reset_problem','problem_check_correct', 'problem_check_incorrect']
 forum_action = ['create_thread','create_comment','delete_thread','delete_comment']
@@ -23,6 +23,7 @@ all_num.columns = ['all#count']
 session_enroll = all_log[['session_id']].drop_duplicates()
 session_num = all_log.groupby('enroll_id').count()
 all_num['session#count'] = session_num['session_id']
+
 for a in video_action + problem_action + forum_action + click_action + close_action:
     action_ = (all_log['action'] == a).astype(int)
     all_log[a+'#num'] = action_
@@ -34,6 +35,6 @@ enroll_info.index = enroll_info['enroll_id']
 del enroll_info['enroll_id']
 all_num = pd.merge(all_num, enroll_info, left_index=True, right_index=True)
 
-all_num.loc[test_enroll].to_csv('test_features.csv') #
+all_num.loc[test_enroll].to_csv('test_features.csv') # 每个注册号下各种行为的数量汇总
 all_num.loc[train_enroll].to_csv('train_features.csv')#
 

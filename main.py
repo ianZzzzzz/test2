@@ -153,7 +153,7 @@ def model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a, par
 dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a = load_data()
 dfTrain_a, dfTest_a, act_feat = feat_augment(dfTrain_a, dfTest_a) # 计算统计值直接merge act_feat 是包含统计值列名的列名list
 
-params = {
+params = { 
     "embedding_size": 32,
     "attn_size": 16,
     "conv_size": 512,
@@ -174,7 +174,7 @@ params = {
     "eval_metric": roc_auc_score,
     "random_seed": 12345
 }
-# 没有返回值不能这样写
+# 没有返回值不能这样写  
 # y_train_dfm, y_test_dfm = model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a,params, act_feat)
 model_run(dfTrain_u, dfTest_u, dfTrain_c, dfTest_c, dfTrain_a, dfTest_a,params, act_feat)
 

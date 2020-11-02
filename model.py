@@ -59,7 +59,9 @@ class CFIN():
     def _init_graph(self):
         
         self.graph = tf.Graph()
+
         with self.graph.as_default():
+
             tf.set_random_seed(self.random_seed)
             
             self.u_feat_index = tf.placeholder(tf.int32, shape=[None, None],
@@ -79,6 +81,7 @@ class CFIN():
             self.weights = self._initialize_weights()
              
             # model
+            # tf.nn.embedding_lookup(tensor,index) 选取一个张量里面索引对应的元素
             self.a_embeddings = tf.nn.embedding_lookup(self.weights["a_feat_embeddings"], self.a_feat_index)
             self.u_embeddings = tf.nn.embedding_lookup(self.weights['u_feat_embeddings'], self.u_feat_index)
             self.c_embeddings = tf.nn.embedding_lookup(self.weights['c_feat_embeddings'], self.c_feat_index)

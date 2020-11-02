@@ -2,7 +2,7 @@ feat.csv包含的列名
 
 
 
-enroll_id,
+# enroll_id,
 all#count,
 session#count,
 seek_video#num,
@@ -27,8 +27,8 @@ click_forum#num,
 click_progress#num,
 close_courseware#num,
 
-truth,username,
-course_id,
+# truth,username,
+# course_id,
 
 age,user_enroll_num,  #user_num_feat
 gender,cluster_label, #user_cat_feat

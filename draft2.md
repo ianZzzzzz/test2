@@ -1,7 +1,7 @@
 features.csv包含的列名
 加上标签和用户课程id就是dfTrain_a
 
-enroll_id,
+# enroll_id,
 all#count,
 session#count,
 seek_video#num,
